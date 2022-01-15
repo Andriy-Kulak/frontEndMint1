@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import axios from 'axios';
+import Image from 'next/image'
 import Loader from 'react-loader-spinner';
 import styled from 'styled-components';
 import NFT from '../utils/EternalNFT.json';
+import { Background } from '../components'
 
 const Title = styled.h1`
   font-size: 50px;
-  color: ${({ theme }) => theme.colors.primary};
 `;
 
 const nftContractAddress = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS;
@@ -19,6 +20,7 @@ const mint = () => {
   const [txError, setTxError] = useState(null);
   const [currentAccount, setCurrentAccount] = useState('');
   const [correctNetwork, setCorrectNetwork] = useState(false);
+  const [counter, incrementCounter] = useState(0);
 
   // Checks if wallet is connected
   const checkIfWalletIsConnected = async () => {
@@ -39,6 +41,8 @@ const mint = () => {
     }
   };
 
+
+
   // Calls Metamask to connect wallet on clicking Connect Wallet button
   const connectWallet = async () => {
     try {
@@ -51,13 +55,13 @@ const mint = () => {
       const chainId = await ethereum.request({ method: 'eth_chainId' });
       console.log(`Connected to chain:${chainId}`);
 
-      const rinkebyChainId = '0x4';
+      const mumbaiChainId = '0x13881';
 
       const devChainId = 1337;
       const localhostChainId = `0x${Number(devChainId).toString(16)}`;
 
-      if (chainId !== rinkebyChainId && chainId !== localhostChainId) {
-        alert('You are not connected to the Rinkeby Testnet!');
+      if (chainId !== mumbaiChainId && chainId !== localhostChainId) {
+        alert('You are not connected to the Mumbai Polygon Testnet!');
         return;
       }
 
@@ -74,14 +78,14 @@ const mint = () => {
   const checkCorrectNetwork = async () => {
     const { ethereum } = window;
     const chainId = await ethereum.request({ method: 'eth_chainId' });
-    console.log(`Connected to chain:${chainId}`);
 
-    const rinkebyChainId = '0x4';
+    const mumbaiChainId = '0x13881';
 
     const devChainId = 1337;
     const localhostChainId = `0x${Number(devChainId).toString(16)}`;
+    console.log(`Connected to chain:${chainId}`, { localhostChainId, mumbaiChainId });
 
-    if (chainId !== rinkebyChainId && chainId !== localhostChainId) {
+    if (chainId !== mumbaiChainId && chainId !== localhostChainId) {
       setCorrectNetwork(false);
     } else {
       setCorrectNetwork(true);
@@ -107,23 +111,29 @@ const mint = () => {
           NFT.abi,
           signer,
         );
-
-        const nftTx = await nftContract.createEternalNFT();
+  
+        console.log('yyyyy are we hitting this', )
+        const nftTx = await nftContract.publicMint();
         console.log('Mining....', nftTx.hash);
         setMiningStatus(0);
+        incrementCounter()
 
         const tx = await nftTx.wait();
         setLoadingState(1);
         console.log('Mined!', tx);
-        const event = tx.events[0];
-        const value = event.args[2];
-        const tokenId = value.toNumber();
+        // const event = tx.events[0];
+        // const value = event.args[2];
+        // const tokenId = value.toNumber();
 
-        console.log(
-          `Mined, see transaction: https://rinkeby.etherscan.io/tx/${nftTx.hash}`,
+
+        alert(
+          `Mined, see transaction: https://mumbai.polygonscan.com/tx/${tx.transactionHash}`,
         );
 
-        getMintedNFT(tokenId);
+        // AK_TO_DO
+        // it would be cool to display minted NFT. need token
+
+        // getMintedNFT(tokenId);
       } else {
         console.log("Ethereum object doesn't exist!");
       }
@@ -147,7 +157,7 @@ const mint = () => {
           signer,
         );
 
-        const tokenUri = await nftContract.tokenURI(tokenId);
+        const tokenUri = await nftContract.tokenURI(tokenId); // Will need to change this
         const data = await axios.get(tokenUri);
         const meta = data.data;
 
@@ -163,90 +173,77 @@ const mint = () => {
   };
   console.log('nftContractAddress 22', nftContractAddress);
   return (
-    <div className="flex flex-col items-center pt-32 bg-[#0B132B] text-[#d3d3d3] min-h-screen">
-      <Title> Test</Title>
-      <div className="trasition hover:rotate-180 hover:scale-105 transition duration-500 ease-in-out">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="60"
-          height="60"
-          fill="currentColor"
-          viewBox="0 0 16 16"
-        >
-          <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5 8 5.961 14.154 3.5 8.186 1.113zM15 4.239l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z" />
-        </svg>
-      </div>
-      <h2 className="text-3xl font-bold mb-20 mt-12">
-        Mint your Eternal Domain NFT!
-      </h2>
-      {currentAccount === '' ? (
-        <button
-          className="text-2xl font-bold py-3 px-12 bg-black shadow-lg shadow-[#6FFFE9] rounded-lg mb-10 hover:scale-105 transition duration-500 ease-in-out"
-          onClick={connectWallet}
-        >
-          Connect Wallet
-        </button>
-      ) : correctNetwork ? (
-        <button
-          className="text-2xl font-bold py-3 px-12 bg-black shadow-lg shadow-[#6FFFE9] rounded-lg mb-10 hover:scale-105 transition duration-500 ease-in-out"
-          onClick={mintCharacter}
-        >
-          Mint Character
-        </button>
-      ) : (
-        <div className="flex flex-col justify-center items-center mb-20 font-bold text-2xl gap-y-3">
-          <div>----------------------------------------</div>
-          <div>Please connect to the Rinkeby Testnet</div>
-          <div>and reload the page</div>
-          <div>----------------------------------------</div>
-        </div>
-      )}
-
-      <div className="text-xl font-semibold mb-20 mt-4">
-        <a
-          href={`https://rinkeby.rarible.com/collection/${nftContractAddress}`}
-          target="_blank"
-          rel="noreferrer"
-        >
-          <span className="hover:underline hover:underline-offset-8 ">
-            View Collection on Rarible
-          </span>
-        </a>
-      </div>
-      {loadingState === 0 ? (
-			  miningStatus === 0 ? (
-			    txError === null ? (
-  <div className="flex flex-col justify-center items-center">
-    <div className="text-lg font-bold">
-      Processing your transaction
-    </div>
-    <Loader
-      className="flex justify-center items-center pt-12"
-      type="TailSpin"
-      color="#d3d3d3"
-      height={40}
-      width={40}
-    />
-  </div>
-			    ) : (
-  <div className="text-lg text-red-600 font-semibold">{txError}</div>
-			    )
-			  ) : (
-  <div />
-			  )
-      ) : (
-        <div className="flex flex-col justify-center items-center">
-          <div className="font-semibold text-lg text-center mb-4">
-            Your Eternal Domain Character
+    <Background>
+      <div style={{ justifyContent: 'center', width: '500px' }}>
+        <Title>Eggies</Title>
+        <Image alt="Vercel logo" src="/assets/eggie-lg.png" width={400} height={500} />
+        <h2>
+          Mint your Eggies NFT!
+        </h2>
+        {currentAccount === '' ? (
+          <button onClick={connectWallet}>
+            Connect Wallet
+          </button>
+        ) : correctNetwork ? (
+          <button onClick={mintCharacter}
+          >
+            Mint Character
+          </button>
+        ) : (
+          <div>
+            <p>----------------------------------------</p>
+            <p>Please connect to the Rinkeby Testnet</p>
+            <p>and reload the page</p>
+            <p>----------------------------------------</p>
           </div>
-          <img
-            src={mintedNFT}
-            alt=""
-            className="h-60 w-60 rounded-lg shadow-2xl shadow-[#6FFFE9] hover:scale-105 transition duration-500 ease-in-out"
-          />
-        </div>
-      )}
+        )}
+
+        {/* <div className="text-xl font-semibold mb-20 mt-4">
+          <a
+            href={`https://rinkeby.rarible.com/collection/${nftContractAddress}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <span className="hover:underline hover:underline-offset-8 ">
+              <h4>View Collection on Rarible</h4>
+            </span>
+          </a>
+        </div> */}
+        {loadingState === 0 ? (
+          miningStatus === 0 ? (
+            txError === null ? (
+    <div className="flex flex-col justify-center items-center">
+      <h2>
+        Processing your transaction
+      </h2>
+      <Loader
+        className="flex justify-center items-center pt-12"
+        type="TailSpin"
+        color="#d3d3d3"
+        height={40}
+        width={40}
+      />
     </div>
+            ) : (
+    <div className="text-lg text-red-600 font-semibold">{txError}</div>
+            )
+          ) : (
+    <div />
+          )
+        ) : (
+          <div className="flex flex-col justify-center items-center">
+            <h2>
+              Your Eggies Character (could be displayed below)
+            </h2>
+            <img
+              src={mintedNFT}
+              alt=""
+              className="h-60 w-60 rounded-lg shadow-2xl shadow-[#6FFFE9] hover:scale-105 transition duration-500 ease-in-out"
+            />
+          </div>
+        )}
+      </div>
+    </Background>
   );
 };
 

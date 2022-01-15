@@ -7,6 +7,11 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    background-image: url('./assets/img_1.png');
+  }
+
+  h1, h2, h3, h4, p {
+    color: white;
   }
 `;
 
