@@ -1,15 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import axios from 'axios';
-import Image from 'next/image'
+import Image from 'next/image';
 import Loader from 'react-loader-spinner';
-import styled from 'styled-components';
 import NFT from '../utils/EternalNFT.json';
-import { Background } from '../components'
-
-const Title = styled.h1`
-  font-size: 50px;
-`;
+import { Background, Button } from '../components';
 
 const nftContractAddress = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS;
 
@@ -20,7 +15,6 @@ const mint = () => {
   const [txError, setTxError] = useState(null);
   const [currentAccount, setCurrentAccount] = useState('');
   const [correctNetwork, setCorrectNetwork] = useState(false);
-  const [counter, incrementCounter] = useState(0);
 
   // Checks if wallet is connected
   const checkIfWalletIsConnected = async () => {
@@ -40,8 +34,6 @@ const mint = () => {
       console.log('No authorized account found');
     }
   };
-
-
 
   // Calls Metamask to connect wallet on clicking Connect Wallet button
   const connectWallet = async () => {
@@ -111,12 +103,11 @@ const mint = () => {
           NFT.abi,
           signer,
         );
-  
-        console.log('yyyyy are we hitting this', )
+
+        console.log('yyyyy are we hitting this');
         const nftTx = await nftContract.publicMint();
         console.log('Mining....', nftTx.hash);
         setMiningStatus(0);
-        incrementCounter()
 
         const tx = await nftTx.wait();
         setLoadingState(1);
@@ -124,7 +115,6 @@ const mint = () => {
         // const event = tx.events[0];
         // const value = event.args[2];
         // const tokenId = value.toNumber();
-
 
         alert(
           `Mined, see transaction: https://mumbai.polygonscan.com/tx/${tx.transactionHash}`,
@@ -174,21 +164,22 @@ const mint = () => {
   console.log('nftContractAddress 22', nftContractAddress);
   return (
     <Background>
-      <div style={{ justifyContent: 'center', width: '500px' }}>
-        <Title>Eggies</Title>
+      <div style={{ justifyContent: 'center', width: '500px', textAlign: 'center' }}>
+        <h1>Eggie Planet</h1>
+        <p>Home of the Eggies</p>
         <Image alt="Vercel logo" src="/assets/eggie-lg.png" width={400} height={500} />
+        <p>Welcome to the Eggie Planet Community driven On-chain</p>
         <h2>
-          Mint your Eggies NFT!
+          Price 0.01 Matic
         </h2>
         {currentAccount === '' ? (
-          <button onClick={connectWallet}>
+          <Button onClick={connectWallet}>
             Connect Wallet
-          </button>
+          </Button>
         ) : correctNetwork ? (
-          <button onClick={mintCharacter}
-          >
+          <Button onClick={mintCharacter}>
             Mint Character
-          </button>
+          </Button>
         ) : (
           <div>
             <p>----------------------------------------</p>
@@ -212,23 +203,23 @@ const mint = () => {
         {loadingState === 0 ? (
           miningStatus === 0 ? (
             txError === null ? (
-    <div className="flex flex-col justify-center items-center">
-      <h2>
-        Processing your transaction
-      </h2>
-      <Loader
-        className="flex justify-center items-center pt-12"
-        type="TailSpin"
-        color="#d3d3d3"
-        height={40}
-        width={40}
-      />
-    </div>
+              <div className="flex flex-col justify-center items-center">
+                <h2>
+                  Processing your transaction
+                </h2>
+                <Loader
+                  className="flex justify-center items-center pt-12"
+                  type="TailSpin"
+                  color="#d3d3d3"
+                  height={40}
+                  width={40}
+                />
+              </div>
             ) : (
-    <div className="text-lg text-red-600 font-semibold">{txError}</div>
+              <div className="text-lg text-red-600 font-semibold">{txError}</div>
             )
           ) : (
-    <div />
+            <div />
           )
         ) : (
           <div className="flex flex-col justify-center items-center">

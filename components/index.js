@@ -1,5 +1,7 @@
-import Background from "./Background";
+import Background from './Background';
+import Button from './Button';
 
 export {
-  Background
-}
+  Background,
+  Button,
+};
