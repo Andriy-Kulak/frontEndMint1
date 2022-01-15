@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import axios from 'axios';
-// import dotenv from 'dotenv';
 import Loader from 'react-loader-spinner';
-
+import styled from 'styled-components';
 import NFT from '../utils/EternalNFT.json';
 
-// dotenv.config();
+const Title = styled.h1`
+  font-size: 50px;
+  color: ${({ theme }) => theme.colors.primary};
+`;
 
 const nftContractAddress = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS;
 
@@ -162,6 +164,7 @@ const mint = () => {
   console.log('nftContractAddress 22', nftContractAddress);
   return (
     <div className="flex flex-col items-center pt-32 bg-[#0B132B] text-[#d3d3d3] min-h-screen">
+      <Title> Test</Title>
       <div className="trasition hover:rotate-180 hover:scale-105 transition duration-500 ease-in-out">
         <svg
           xmlns="http://www.w3.org/2000/svg"

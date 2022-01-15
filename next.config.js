@@ -4,4 +4,8 @@ module.exports = {
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
+  experimental: {
+    // ssr and displayName are configured by default
+    styledComponents: true,
+  },
 };
