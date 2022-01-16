@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import axios from 'axios';
 import Image from 'next/image';
 import Loader from 'react-loader-spinner';
-import NFT from '../utils/EternalNFT.json';
+import NFT from '../utils/EggieNFT.json';
 import {
   Background, Button, LowerSection, Toggle, Menu,
 } from '../components';
@@ -119,9 +119,16 @@ const mint = () => {
         const tx = await nftTx.wait();
         setLoadingState(1);
         console.log('Mined!', tx);
-        // const event = tx.events[0];
-        // const value = event.args[2];
-        // const tokenId = value.toNumber();
+        // const event = tx?.events[0];
+        // console.log('yyyy event', event);
+        // const transction = await event.getTransaction();
+        // console.log('yyyy transction', transction);
+        // console.log('yyy transaction.toNumber', transction.value.toNumber());
+        // const value = event?.args[2];
+        // console.log('yyyy value', value);
+        // const tokenId = value?.toNumber();
+        // console.log('yyyy tokenId', tokenId);
+        // console.log('are we getting this info', { event, value, tokenId });
 
         alert(
           `Mined, see transaction: https://mumbai.polygonscan.com/tx/${tx.transactionHash}`,
