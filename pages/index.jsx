@@ -4,7 +4,7 @@ import axios from 'axios';
 import Image from 'next/image';
 import Loader from 'react-loader-spinner';
 import NFT from '../utils/EternalNFT.json';
-import { Background, Button } from '../components';
+import { Background, Button, LowerSection } from '../components';
 
 const nftContractAddress = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS;
 
@@ -222,7 +222,7 @@ const mint = () => {
             <div />
           )
         ) : (
-          <div className="flex flex-col justify-center items-center">
+          <div>
             <h2>
               Your Eggies Character (could be displayed below)
             </h2>
@@ -233,6 +233,7 @@ const mint = () => {
             />
           </div>
         )}
+        <LowerSection />
       </div>
     </Background>
   );
