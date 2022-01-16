@@ -7,6 +7,7 @@ const GlobalStyle = createGlobalStyle`
     padding: 0;
     box-sizing: border-box;
     background-image: url('./assets/img_1.png');
+    background-repeat: repeat-y;
     font-family: Helvetica;
   }
 

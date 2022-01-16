@@ -4,7 +4,9 @@ import axios from 'axios';
 import Image from 'next/image';
 import Loader from 'react-loader-spinner';
 import NFT from '../utils/EternalNFT.json';
-import { Background, Button, LowerSection } from '../components';
+import {
+  Background, Button, LowerSection, Toggle, Menu,
+} from '../components';
 
 const nftContractAddress = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS;
 
@@ -15,6 +17,11 @@ const mint = () => {
   const [txError, setTxError] = useState(null);
   const [currentAccount, setCurrentAccount] = useState('');
   const [correctNetwork, setCorrectNetwork] = useState(false);
+  const [navToggled, setNavToggled] = useState(false);
+
+  const handleNavToggle = () => {
+    setNavToggled(!navToggled);
+  };
 
   // Checks if wallet is connected
   const checkIfWalletIsConnected = async () => {
@@ -163,7 +170,9 @@ const mint = () => {
   };
   console.log('nftContractAddress 22', nftContractAddress);
   return (
-    <Background>
+    <Background id="home">
+      <Toggle handleNavToggle={handleNavToggle} />
+      { navToggled ? <Menu handleNavToggle={handleNavToggle} /> : null }
       <div style={{ justifyContent: 'center', width: '500px', textAlign: 'center' }}>
         <h1>Eggie Planet</h1>
         <p>Home of the Eggies</p>
